@@ -28,6 +28,7 @@ class CarrosDAO extends db{
 
     }
 
+    //Libera dados da memória
     public function __destruct(){
         foreach($this as $key => $value){
             unset($this->key);
