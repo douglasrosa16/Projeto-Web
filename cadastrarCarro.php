@@ -7,12 +7,6 @@
     if ($db->connect()) {
     $dao = new CarrosDAO($db);
   
-    //Inserir um novo Carro
-    if(count($_POST) && isset($_POST['name'])){ 
-        $d = new Product(null, $_POST['name']);
-        $dao->inserir($d); 
-        header("Location: products.php");
-    }
   }else{
       echo "Erro na conexão com o MySQL";
   }
