@@ -1,20 +1,16 @@
 <?php
     require_once('db.php');
-    require_once('carro.php');
-    require_once('CarrosDAO.php');
     require_once('marca.php');
     require_once('MarcaDAO.php');
 
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {
         
-        $dao = new CarrosDAO($db);
+        $dao = new MarcasDAO($db);
         
-    if(count($_POST) && isset($_POST['modelo'])){
-        $marca = new Marca(1,"Fiat");
-        $marca_id = 1;
-        $carro = new Carro(null, $_POST['modelo'], $_POST['ano'], $_POST['placa'], $marca_id);
-        $dao->insereCarro($carro);
+    if(count($_POST) && isset($_POST['marca'])){
+        $marca = new Marca(null, $_POST['marca']);
+        $dao->insereMarca($marca);
     } 
     
   }else{
@@ -38,25 +34,15 @@
 
     <div class="container">
         <div class="py-5 text-center">
-            <h2>Cadastrar Carro</h2>
+            <h2>Cadastrar Marca de Carro</h2>
         </div>
         <div class="row">
             <div class="col-md-12" >
-                <form action="cadastrarCarro.php" class="card p-2 my-4" 
+                <form action="cadastrarMarca.php" class="card p-2 my-4" 
                     method="POST">
                     <div class="input-group">
-                        <input type="text" placeholder="Informe o modelo" 
-                            class="form-control" name="modelo" required>
-                        <input type="text" placeholder="Informe o Ano" 
-                            class="form-control" name="ano">
-                        <input type="text" placeholder="Informe o Placa do Carro" 
-                            class="form-control" name="placa"> 
-                        <select>
-                            <option name="fiat" value="fiat">Fiat</option>
-                            <option name="toyota" value="toyota">Toyota</option>
-                            <option name="ferrari" value="ferrari">Ferrari</option>
-                            <option name="audi" value="Audi">Audi</option>
-                        </select>                           
+                        <input type="text" placeholder="Informe a Marca" 
+                            class="form-control" name="marca" required>                  
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-secondary">
                                 Salvar

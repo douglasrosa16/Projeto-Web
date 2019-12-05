@@ -20,10 +20,16 @@
             <div class="col-md-12" >
                 <div class="input-group">    
                     <div class="input-group-append">
-                        <a class="btn btn-primary" href="cadastrarCarro.php" role="button">Cadastrar</a>
+                        <a class="btn btn-primary" href="cadastrarCarro.php" role="button">Cadastrar Carro</a>
                     </div>                          
                     <div class="input-group-append">
-                        <a class="btn btn-primary" href="product_new.php" role="button">Consultar</a>
+                        <a class="btn btn-primary" href="listaCarros.php" role="button">Consultar Carro</a>
+                    </div>                                  
+                    <div class="input-group-append">
+                        <a class="btn btn-primary" href="cadastrarMarca.php" role="button">Cadastrar Marca</a>
+                    </div>                          
+                    <div class="input-group-append">
+                        <a class="btn btn-primary" href="listaMarcas.php" role="button">Consultar Marca</a>
                     </div>                                  
                 </div>
             </div>

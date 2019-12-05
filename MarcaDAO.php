@@ -1,47 +1,45 @@
 <?php
 
 require_once('db.php');
-require_once('carro.php');
-class CarrosDAO extends db{
+require_once('marca.php');
+class MarcasDAO extends db{
 
-    public function __construct(Db $con){
-        $this->con = $con;
-    }
+  public function __construct(Db $con){
+    $this->con = $con;
+  }
 
-    public function getCarros() {
+    public function getMarcas() {
         if ($this->con->isConnected()) {
-            $sql="SELECT carro_id, modelo, ano, placa, marca_id from carros";
+            $sql="SELECT marca_id, marca from marcas";
             $stmt = $this->con->prepare($sql);
             $stmt->execute();
-            $stmt->bind_result($carro_id, $modelo, $ano, $placa, $marca_id);
+            $stmt->bind_result($marca_id, $marca);
             $res = $stmt->store_result();
-            $carros = [];
+            $Marcas = [];
             if ($stmt->num_rows > 0) {
                 while ($stmt->fetch()) {
-                    $carros[] = new Carro($carro_id, $modelo, $ano, $placa, $marca_id);
+                    $Marcas[] = new Marca($marca_id, $marca,);
                 }
             }
             $stmt->close();
-            return $carros;
+            return $Marcas;
         }
         return [];
     }
 
-    public function insereCarro(Carro $carro) {
+    public function insereMarca(Marca $marca) {
         if ($this->con->isConnected()) {
-            $sql = "INSERT INTO carros (modelo, ano, placa) VALUES(?,?,?)";
+            $sql = "INSERT INTO marcas (marca) VALUES(?)";
             $stmt = $this->con->prepare($sql);
             if (isset($stmt)) {
-                $modelo = $carro->getModelo();
-                $ano    = $carro->getAno();
-                $placa  = $carro->getPlaca();
-                $id_marca = $carro->getMarca_id();
-                $stmt->bind_param('sss',$modelo, $ano, $placa);
+                $marca = $marca->getMarca();
+                $id_marca = $marca->getId();
+                $stmt->bind_param('s',$marca);
                 if ($stmt->execute()) {
                     $lastId = $this->con->getLastID();
-                    $carro->setId($lastId);
+                    $id_marca->setId($lastId);
                     $stmt->close();
-                    return $carro;
+                    return $marca;
                 }
                 $stmt->close();
             }
@@ -49,18 +47,18 @@ class CarrosDAO extends db{
         return null;
     }
 
-    public function getCarroByID($id) {
+    public function getMarcaByID($id) {
         if ($this->con->isConnected()) {
-            $sql = "SELECT carro_id, modelo, ano, placa, marca_id from carros where carro_id = ?";
+            $sql = "SELECT marca_id, marca from marcas where marca_id = ?";
             $stmt = $this->con->prepare($sql);
             $stmt->bind_param('i', $id);
             if ($stmt->execute()) {
-                $stmt->bind_result($carro_id, $modelo, $ano, $placa, $marca_id);
+                $stmt->bind_result($marca_id, $marca);
                 $stmt->store_result();
                 if ($stmt->num_rows > 0) {
                     if ($stmt->fetch()) {
                         $stmt->close();
-                        return new Carro ($carro_id, $modelo, $ano, $placa, $marca_id);
+                        return new Marca ($marca_id, $marca);
                     }
                 }
             }
@@ -69,12 +67,12 @@ class CarrosDAO extends db{
         return null;
     }
 
-    public function apagarCarro(Carro $carro) {
+    public function apagarMarca(Marca $marca) {
         if ($this->con->isConnected()) {
-            $sql = "DELETE FROM carros WHERE carro_id = ?";
+            $sql = "DELETE FROM marcas WHERE marca_id = ?";
             $stmt = $this->con->prepare($sql);
             if (isset($stmt)) {
-                $id = $carro->getId();
+                $id = $marca->getId();
                 $stmt->bind_param('i', $id);
                 $res = $stmt->execute();
                 $stmt->close();
@@ -84,14 +82,14 @@ class CarrosDAO extends db{
         return false;
     }
 
-    public function salvarCarro(Carro $carro) {
+    public function salvarMarca(Marca $marca) {
         if ($this->con->isConnected()) {
-            $sql = "UPDATE carros SET modelo=? WHERE carro_id=?";
+            $sql = "UPDATE marcas SET marca=? WHERE marca_id=?";
             $stmt = $this->con->prepare($sql);
             if (isset($stmt)) {
-                $carro_id = $carro->getId();
-                $modelo = $carro->getModelo();
-                $stmt->bind_param('si',$modelo, $carro_id);
+                $marca_id = $marca->getId();
+                $marca = $marca->getMarca();
+                $stmt->bind_param('si',$marca, $marca_id);
                 $res = $stmt->execute();
                 $stmt->close();
                 return $res;
