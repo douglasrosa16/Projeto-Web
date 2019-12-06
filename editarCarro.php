@@ -7,37 +7,12 @@
    
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {
-        $daoMarca = new MarcasDAO($db);
         $dao = new CarrosDAO($db);
-        if(isset($_GET['op']) && $_GET['op'] != ""){
-            $editar = true;
-            $id = $_GET['id'];
-        }else{
-            $editar = false;
-            $id = "";
-        }
         
-        //Cadastrar um Carro
-        if(count($_POST) && isset($_POST['modelo']) && ($editar == false)){
-            $marca = new Marca(1,"Fiat");
-            $marca_id = 1;
-            $carro = new Carro(null, $_POST['modelo'], $_POST['ano'], $_POST['placa'], $marca_id);
-            $dao->insereCarro($carro);
-        } 
-    
         //Editar o Carro
         if(count($_POST) && $id != ""){
-            if($_GET['op'] == "editar"){
-                //$mCarro = new Carro($_GET['id'],$_POST['modelo'],$_POST['ano'],$_POST['placa'],null);
-                //if(!$mCarro == ""){
-                    $dao->update($mCarro);
-                //}
-                $editar = false;
-                header("location:index.php");
-            }
-        
-    }
-    $marcas = $daoMarca->getMarcas();
+            $dao->update($mCarro);
+        }
    }else{
     echo "Erro na conexão com o MySQL";
   }
@@ -53,20 +28,12 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Locadora de Carros</title>
+    <title>Editar de Carros</title>
   </head>
   <body>
 
     <div class="container">
-        <div class="py-5 text-center">
-            <?php 
-                if($editar){
-                    echo "<h2>Editar Carro</h2>"; 
-                }else{
-                    echo "<h2>Cadastrar Carro</h2>";
-                }
-            ?>
-            
+        <div class="py-5 text-center">           
         </div>
         <div class="row">
             <div class="col-md-12" >

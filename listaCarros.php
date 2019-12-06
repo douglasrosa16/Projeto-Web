@@ -6,36 +6,27 @@
 
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {     
-
-        
-    if (isset($_GET['id']) != "")
-        if ($_GET['op'] == "editar"){
-            if(isset($_POST['id']) && $_POST['id'] != ""){
-                $disciplina = $dao->getCarroByID($_POST['id']);
-                $disciplina->setModelo($_POST['modelo']);
-                $dao->update($disciplina);
-            }        
-        }    
-    }else if($_GET['op'] == "apagar"){
-
-    }
-    
-    //Deletar o Carro
-    if(count($_GET) && (isset($_GET['op'])) && (isset($_GET['id'])) && $_GET['id']!="" ){
-        
-        $id = $_GET['id'];
-        $disciplina = $dao->getCarroByID($id);
-        if ($op == "apagar"){
-            $dao->apagar($disciplina);
-        }
-    }    
-    //FIM
-
-
         $dao = new CarrosDAO($db);
         $carro = null;
-        if(count($_GET) && ($_GET['id_pesquisa'] != "")) {
-            $carro = $dao->getCarroByID($_GET['id_pesquisa']);
+        
+        //Deletar o Carro
+        if(count($_GET) && isset($_GET['op']) && $_GET['id']!=""){     
+            $opcao = $_GET['op'];
+            $mCarro = $dao->getCarroByID($_GET['id']);
+            if(!$mCarro == null){
+                if($opcao == "apagar"){                
+                    $dao->apagarCarro($mCarro);
+                }
+            }else{
+                header("location:listaCarros.php");
+            }
+        }    
+
+        //Pesquisar Carro por ID
+        if(count($_GET) && (isset($_GET['id_pesquisa']))) {
+            if($_GET['id_pesquisa'] != ""){
+                $carro = $dao->getCarroByID($_GET['id_pesquisa']);
+            }
         }
     
         $carros = $dao->getCarros();
@@ -105,11 +96,11 @@
                             Info
                         </a>  
                         <a class="btn btn-danger btn-sm active"
-                           href="disciplinas_template.php?op=apagar&id=<?php echo $d->getId(); ?>">
+                           href="listaCarros.php?op=apagar&id=<?php echo $d->getId(); ?>">
                             Apagar
                         </a>
                         <a class="btn btn-success btn-sm active" 
-                           href="disciplinas_template.php?op=editar&id=<?php echo $d->getId();?>">
+                           href="editarCarro.php?&id=<?php echo $d->getId();?>">
                             Editar
                         </a>   
                     </td>

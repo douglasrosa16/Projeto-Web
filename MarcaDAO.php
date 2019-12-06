@@ -10,15 +10,15 @@ class MarcasDAO extends db{
 
     public function getMarcas() {
         if ($this->con->isConnected()) {
-            $sql="SELECT marca_id, marca from marcas";
+            $sql="SELECT marca_id, nome_marca from marcas";
             $stmt = $this->con->prepare($sql);
             $stmt->execute();
-            $stmt->bind_result($marca_id, $marca);
+            $stmt->bind_result($marca_id, $nome_marca);
             $res = $stmt->store_result();
             $Marcas = [];
             if ($stmt->num_rows > 0) {
                 while ($stmt->fetch()) {
-                    $Marcas[] = new Marca($marca_id, $marca,);
+                    $Marcas[] = new Marca($marca_id, $nome_marca);
                 }
             }
             $stmt->close();
@@ -29,15 +29,14 @@ class MarcasDAO extends db{
 
     public function insereMarca(Marca $marca) {
         if ($this->con->isConnected()) {
-            $sql = "INSERT INTO marcas (marca) VALUES(?)";
+            $sql = "INSERT INTO marcas (nome_marca) VALUES(?)";
             $stmt = $this->con->prepare($sql);
-            if (isset($stmt)) {
-                $marca = $marca->getMarca();
-                $id_marca = $marca->getId();
-                $stmt->bind_param('s',$marca);
+            if ($stmt) {
+                $nomeMarca = $marca->getMarca();
+                $stmt->bind_param('s',$nomeMarca);
                 if ($stmt->execute()) {
                     $lastId = $this->con->getLastID();
-                    $id_marca->setId($lastId);
+                    $marca->setId($lastId);
                     $stmt->close();
                     return $marca;
                 }
@@ -49,16 +48,16 @@ class MarcasDAO extends db{
 
     public function getMarcaByID($id) {
         if ($this->con->isConnected()) {
-            $sql = "SELECT marca_id, marca from marcas where marca_id = ?";
+            $sql = "SELECT marca_id, nome_marca from marcas where marca_id = ?";
             $stmt = $this->con->prepare($sql);
             $stmt->bind_param('i', $id);
             if ($stmt->execute()) {
-                $stmt->bind_result($marca_id, $marca);
+                $stmt->bind_result($marca_id, $nome_marca);
                 $stmt->store_result();
                 if ($stmt->num_rows > 0) {
                     if ($stmt->fetch()) {
                         $stmt->close();
-                        return new Marca ($marca_id, $marca);
+                        return new Marca ($marca_id, $nome_marca);
                     }
                 }
             }

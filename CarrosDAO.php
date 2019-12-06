@@ -49,25 +49,32 @@ class CarrosDAO extends db{
         return null;
     }
 
-    public function getCarroByID($id) {
-        if ($this->con->isConnected()) {
+    public function getCarroByID($id){
+        if($this->con->isConnected()){
             $sql = "SELECT carro_id, modelo, ano, placa, marca_id from carros where carro_id = ?";
             $stmt = $this->con->prepare($sql);
-            $stmt->bind_param('i', $id);
-            if ($stmt->execute()) {
-                $stmt->bind_result($carro_id, $modelo, $ano, $placa, $marca_id);
-                $stmt->store_result();
-                if ($stmt->num_rows > 0) {
-                    if ($stmt->fetch()) {
-                        $stmt->close();
-                        return new Carro ($carro_id, $modelo, $ano, $placa, $marca_id);
+            if($stmt){
+                $stmt->bind_param("i",$id);
+                if ($stmt->execute()){            
+                    $stmt->bind_result($carro_id, $modelo, $ano, $placa, $marca_id);
+                    $stmt->store_result();
+                    $carro = null; //vai retornar ela caso ela seja zero
+                    if($stmt->num_rows > 0){
+                        $stmt->fetch();
+                        $carro = new Carro($carro_id, $modelo, $ano, $placa, $marca_id);
                     }
-                }
+                    $stmt->close();
+                    return $carro;
+                }          
+            }else{
+                echo "Não foi possível executar esse comando";        
             }
-            $stmt->close();
+        }else{
+            echo "Você não está conectado!";
+            return null;
         }
-        return null;
     }
+
 
     public function apagarCarro(Carro $carro) {
         if ($this->con->isConnected()) {
@@ -100,6 +107,31 @@ class CarrosDAO extends db{
         return false;
     }
 
+    public function update(Carro $d){
+        if($this->con->isConnected()){
+            $sql = "UPDATE carros SET modelo = ?, ano = ?, placa = ? WHERE carro_id = ?";
+            $stmt = $this->con->prepare($sql);
+            var_dump($stmt);
+            if($stmt){
+                $modelo = $d->getModelo();
+                $ano = $d->getAno();
+                $placa = $d->getPlaca();
+                $id = $d->getId();
+                $stmt->bind_param('ssss', $modelo, $ano, $placa, $id);
+                if($stmt->execute()){
+                    $res = $stmt->execute();
+                    $stmt->close();
+                    return $res;
+                }         
+            }else{
+                $stmt->close();
+            }
+            header("Location: listaCarros.php");
+        }else{
+            echo "Erro ao conectar";
+            return false;
+        }
+    }
 }
   
    ?>

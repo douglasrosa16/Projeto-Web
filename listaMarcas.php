@@ -1,47 +1,35 @@
 <?php
 
     require_once('db.php');
-    require_once('CarrosDAO.php');
-    require_once('carro.php');
+    require_once('MarcaDAO.php');
+    require_once('marca.php');
 
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {     
-
+        $dao = new MarcasDAO($db);
+        $marca = null;
         
-    if (isset($_GET['id']) != "")
-        if ($_GET['op'] == "editar"){
-            if(isset($_POST['id']) && $_POST['id'] != ""){
-                $disciplina = $dao->getCarroByID($_POST['id']);
-                $disciplina->setModelo($_POST['modelo']);
-                $dao->update($disciplina);
-            }        
+        //Deletar uma Marca
+        if(count($_GET) && isset($_GET['op']) && $_GET['id']!=""){     
+            $opcao = $_GET['op'];
+            $mMarca = $dao->getMarcaByID($_GET['id']);
+            if(!$mMarca == null){
+                if($opcao == "apagar"){                
+                    $dao->apagarMarca($mMarca);
+                }
+            }else{
+                header("location:listaMarcas.php");
+            }
         }    
-    }else if($_GET['op'] == "apagar"){
 
-    }
-    
-    //Deletar o Carro
-    if(count($_GET) && (isset($_GET['op'])) && (isset($_GET['id'])) && $_GET['id']!="" ){
-        
-        $id = $_GET['id'];
-        $disciplina = $dao->getCarroByID($id);
-        if ($op == "apagar"){
-            $dao->apagar($disciplina);
-        }
-    }    
-    //FIM
-
-
-        $dao = new CarrosDAO($db);
-        $carro = null;
-        if(count($_GET) && ($_GET['id_pesquisa'] != "")) {
-            $carro = $dao->getCarroByID($_GET['id_pesquisa']);
+        //Consultar Marca por ID
+        if(count($_GET) && (isset($_GET['id_pesquisa']))) {
+            if($_GET['id_pesquisa'] != ""){
+                $marca = $dao->getMarcaByID($_GET['id_pesquisa']);
+            }
         }
     
-        $carros = $dao->getCarros();
-    
-    
-
+        $marcas = $dao->getMarcas(); 
   }else{
       echo "Erro na conexão com o MySQL";
   }
@@ -56,17 +44,17 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Carros Cadastrados</title>
+    <title>Marcas Cadastradas</title>
   </head>
   <body>
 
     <div class="container">
         <div class="py-5 text-center">
-            <h2>Lista de Carros</h2>
+            <h2>Lista de Marcas</h2>
         </div>
         <div class="row">
             <div class="col-md-12" >
-                <form action="listaCarros.php" class="card p-2 my-4" 
+                <form action="listaMarcas.php" class="card p-2 my-4" 
                     method="GET">
                     <div class="input-group">
                         <div class="input-group-append">    
@@ -75,8 +63,8 @@
                                 Pesquisar
                             </button>
                             <?php                             
-                                if(!$carro == null){
-                                    echo "<strong>ID: </strong>".$carro->getId()." - ". "<strong>Nome:  </strong>  ".$carro->getModelo();
+                                if(!$marca == null){
+                                    echo "<strong>ID: </strong>".$marca->getId()." - ". "<strong>Nome:  </strong>  ".$marca->getMarca();
                                 }else{
                                     echo "";
                                 }                                  
@@ -94,22 +82,22 @@
                 </thead>
                 <tbody>
 <?php      
-    foreach($carros as $d){ 
+    foreach($marcas as $d){ 
 ?>                
                 <tr>
                     <th scope="row"><?php echo $d->getId();?></th>
-                    <td><?php echo $d->getModelo();?></td>
+                    <td><?php echo $d->getMarca();?></td>
                     <td>
                         <a class="btn btn-secondary btn-sm active" 
-                           href="carro_info.php?&id=<?php echo $d->getId();?>">
+                           href="marca_info.php?&id=<?php echo $d->getId();?>">
                             Info
                         </a>  
                         <a class="btn btn-danger btn-sm active"
-                           href="disciplinas_template.php?op=apagar&id=<?php echo $d->getId(); ?>">
+                           href="listaMarcas.php?op=apagar&id=<?php echo $d->getId(); ?>">
                             Apagar
                         </a>
                         <a class="btn btn-success btn-sm active" 
-                           href="disciplinas_template.php?op=editar&id=<?php echo $d->getId();?>">
+                           href="cadastrarMarca.php?op=editar&id=<?php echo $d->getId();?>">
                             Editar
                         </a>   
                     </td>
