@@ -13,3 +13,7 @@ body, input, button {
     padding: 5px;
     margin: 4px;
 }
+
+.flexs{
+    display: flex;
+}
