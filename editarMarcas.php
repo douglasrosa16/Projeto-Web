@@ -1,25 +1,24 @@
 <?php
     require_once('db.php');
-    require_once('carro.php');
-    require_once('CarrosDAO.php');
     require_once('marca.php');
     require_once('MarcaDAO.php');
    
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {
-        $daoMarca = new MarcasDAO($db);
-        $dao = new CarrosDAO($db);
+        $daoMarcas = new MarcasDAO($db);
 
-        //Cadastrar um Carro       
-        if(count($_POST) && isset($_POST['modelo']) && isset($_POST['idMarca'])){           
-            $id_marca = $_POST['idMarca'];
-            $carro = new Carro(null, $_POST['modelo'], $_POST['ano'], $_POST['placa'], $id_marca);
-            $dao->insereCarro($carro);
-        } 
-        
-    
-    $marcas = $daoMarca->getMarcas();
-   }else{
+        if(count($_GET)){
+            $id = $_GET['id'];
+        }
+        if(count($_POST) && $_POST['idMarca'] != ""){
+            $mMarca = $daoMarcas->getMarcaByID($_POST['idMarca']);
+            $mMarca->setMarca($_POST['nome_marca']);
+            $daoMarcas->update($mMarca);
+            header("location:listaMarcas.php");
+        }
+  
+        $marcas = $daoMarcas->getMarcas(); 
+    }else{
     echo "Erro na conexão com o MySQL";
   }
 
@@ -34,44 +33,34 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>Locadora de Carros</title>
+    <title>Editar de Marcas</title>
   </head>
   <body>
 
     <div class="container">
-        <div class="py-5 text-center">
-            <h2>Cadastrar Carro</h2>  
+        <div class="py-5 text-center">   
+            <h2>Editar Marcas</h2>        
         </div>
         <div class="row">
             <div class="col-md-12" >
-                <form action="cadastrarCarro.php" class="card p-2 my-4" 
+            <form action="editarMarcas.php" class="card p-2 my-4" 
                     method="POST">
                     <div class="input-group">
                         <input type="text" placeholder="Informe o modelo" 
-                            class="form-control" name="modelo" required>
-                        <input type="text" placeholder="Informe o Ano" 
-                            class="form-control" name="ano">
-                        <input type="text" placeholder="Informe o Placa do Carro" 
-                            class="form-control" name="placa"> 
-                        <select name="idMarca">
-                            <?php foreach($marcas as $ma) {?>
-                            <option value=<?php echo $ma->getId(); ?>> <?php echo $ma->getMarca(); ?> </option>
-                            <?php } ?>
-                        </select>   
-                            
+                            class="form-control" name="nome_marca" required>
+                        <input type="hidden" class="form-control" name="idMarca" 
+                            value=<?php echo $id; ?>> 
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-secondary">
                                 Salvar
                             </button>
                         </div>
                     </div>
-                </form>             
+                </form>                      
                 <a class="btn btn-primary" href="index.php" role="button">Voltar</a>
             </div>
         </div>
     </div>
-    
-    
     
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

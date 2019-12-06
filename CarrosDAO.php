@@ -29,14 +29,14 @@ class CarrosDAO extends db{
 
     public function insereCarro(Carro $carro) {
         if ($this->con->isConnected()) {
-            $sql = "INSERT INTO carros (modelo, ano, placa) VALUES(?,?,?)";
+            $sql = "INSERT INTO carros (modelo, ano, placa, marca_id) VALUES(?,?,?,?)";
             $stmt = $this->con->prepare($sql);
             if (isset($stmt)) {
                 $modelo = $carro->getModelo();
                 $ano    = $carro->getAno();
                 $placa  = $carro->getPlaca();
-                $id_marca = $carro->getMarca_id();
-                $stmt->bind_param('sss',$modelo, $ano, $placa);
+                $marca_id = $carro->getMarca_id();
+                $stmt->bind_param('ssss',$modelo, $ano, $placa, $marca_id);
                 if ($stmt->execute()) {
                     $lastId = $this->con->getLastID();
                     $carro->setId($lastId);

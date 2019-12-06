@@ -46,26 +46,32 @@ class MarcasDAO extends db{
         return null;
     }
 
-    public function getMarcaByID($id) {
-        if ($this->con->isConnected()) {
+    public function getMarcaByID($id){
+        if($this->con->isConnected()){
             $sql = "SELECT marca_id, nome_marca from marcas where marca_id = ?";
             $stmt = $this->con->prepare($sql);
-            $stmt->bind_param('i', $id);
-            if ($stmt->execute()) {
-                $stmt->bind_result($marca_id, $nome_marca);
-                $stmt->store_result();
-                if ($stmt->num_rows > 0) {
-                    if ($stmt->fetch()) {
-                        $stmt->close();
-                        return new Marca ($marca_id, $nome_marca);
+            if($stmt){
+                $stmt->bind_param("i",$id);
+                if ($stmt->execute()){            
+                    $stmt->bind_result($marca_id, $nome_marca);
+                    $stmt->store_result();
+                    $marca = null; 
+                    if($stmt->num_rows > 0){
+                        $stmt->fetch();
+                        $marca = new Marca($marca_id, $nome_marca);
                     }
-                }
+                    $stmt->close();
+                    return $marca;
+                }          
+            }else{
+                echo "Não foi possível executar esse comando";        
             }
-            $stmt->close();
+        }else{
+            echo "Você não está conectado!";
+            return null;
         }
-        return null;
     }
-
+    
     public function apagarMarca(Marca $marca) {
         if ($this->con->isConnected()) {
             $sql = "DELETE FROM marcas WHERE marca_id = ?";
@@ -95,6 +101,30 @@ class MarcasDAO extends db{
             }
         }
         return false;
+    }
+
+    public function update(Marca $d){
+        if($this->con->isConnected()){
+            $sql = "UPDATE marcas SET nome_marca = ? WHERE marca_id = ?";
+            $stmt = $this->con->prepare($sql);
+            var_dump($stmt);
+            if($stmt){
+                $nome_marca = $d->getMarca();
+                $id = $d->getId();
+                $stmt->bind_param('ss', $nome_marca, $id);
+                if($stmt->execute()){
+                    $res = $stmt->execute();
+                    $stmt->close();
+                    return $res;
+                }         
+            }else{
+                $stmt->close();
+            }
+            header("Location: listaMarcas.php");
+        }else{
+            echo "Erro ao conectar";
+            return false;
+        }
     }
 
 }

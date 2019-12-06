@@ -8,12 +8,24 @@
     $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {
         $dao = new CarrosDAO($db);
-        
-        //Editar o Carro
-        if(count($_POST) && $id != ""){
-            $dao->update($mCarro);
+        $daoMarcas = new MarcasDAO($db);
+
+        if(count($_GET)){
+            $id = $_GET['id'];
         }
-   }else{
+        if(count($_POST) && $_POST['idCarro'] != ""){
+            $mCarro = $dao->getCarroByID($_POST['idCarro']);
+            $marca_id = $mCarro->getMarca_id();
+            $mCarro->setModelo($_POST['modelo']);
+            $mCarro->setAno($_POST['ano']);
+            $mCarro->setPlaca($_POST['placa']);
+            $mCarro->setMarca_id($marca_id);
+            $dao->update($mCarro);
+            header("Location: listaCarros.php");
+        }
+  
+        $marcas = $daoMarcas->getMarcas(); 
+    }else{
     echo "Erro na conexão com o MySQL";
   }
 
@@ -33,11 +45,12 @@
   <body>
 
     <div class="container">
-        <div class="py-5 text-center">           
+        <div class="py-5 text-center">   
+            <h2>Editar Carros</h2>        
         </div>
         <div class="row">
             <div class="col-md-12" >
-                <form action="cadastrarCarro.php" class="card p-2 my-4" 
+                <form action="editarCarro.php" class="card p-2 my-4" 
                     method="POST">
                     <div class="input-group">
                         <input type="text" placeholder="Informe o modelo" 
@@ -46,6 +59,8 @@
                             class="form-control" name="ano">
                         <input type="text" placeholder="Informe o Placa do Carro" 
                             class="form-control" name="placa"> 
+                        <input type="hidden" class="form-control" name="idCarro" 
+                            value=<?php echo $id; ?>> 
                         <select>
                             <?php foreach($marcas as $ma) {?>
                             <option name=<?php echo $ma->getId(); ?>> <?php echo $ma->getMarca(); ?> </option>
@@ -63,8 +78,6 @@
             </div>
         </div>
     </div>
-    
-    
     
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

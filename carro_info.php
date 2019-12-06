@@ -3,15 +3,25 @@
   require_once('db.php');
   require_once('carro.php');
   require_once('CarrosDAO.php');
+  require_once('MarcaDAO.php');
+  require_once('marca.php');
 
 
   $db = new Db("localhost", "root", "", "locadora");
     if ($db->connect()) {
     $dao = new CarrosDAO($db);
-        
-    $id = $_GET['id'];
-    $carros = $dao->getCarroByID($id); 
+    $daoMarca = new MarcasDAO($db);
 
+    $id = $_GET['id'];
+    $carro = $dao->getCarroByID($id);
+    $IdMarca = $carro->getMarca_id();
+    if($IdMarca == ""){
+        $marca = null;
+    }else{
+        $marca = $daoMarca->getMarcaByID($IdMarca);
+    }
+    
+    
     }else{
         echo "Erro na conexão com o MySQL";
     }      
@@ -46,14 +56,20 @@
                         <th scope="col">Modelo</th>
                         <th scope="col">Ano</th>
                         <th scope="col">Placa</th>
+                        <th scope="col">Marca</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <th scope="row"><?php echo $carros->getId();?></th>
-                    <td><?php echo $carros->getModelo();?></td>        
-                    <td><?php echo $carros->getAno();?></td> 
-                    <td><?php echo $carros->getPlaca();?></td> 
+                    <th scope="row"><?php echo $carro->getId();?></th>
+                    <td><?php echo $carro->getModelo();?></td>        
+                    <td><?php echo $carro->getAno();?></td> 
+                    <td><?php echo $carro->getPlaca();?></td> 
+                    <td><?php 
+                        if(!$marca == null){
+                            echo $marca->getMarca();
+                        }
+                    ?></td> 
                 </tr>
                 </tbody>
                 </table>

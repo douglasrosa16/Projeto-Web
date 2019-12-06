@@ -97,7 +97,7 @@
                             Apagar
                         </a>
                         <a class="btn btn-success btn-sm active" 
-                           href="cadastrarMarca.php?op=editar&id=<?php echo $d->getId();?>">
+                           href="editarMarcas.php?&id=<?php echo $d->getId();?>">
                             Editar
                         </a>   
                     </td>
