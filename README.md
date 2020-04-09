@@ -4,5 +4,5 @@
 por objetivo um locadora, onde é possível Cadastrar, Consultar, Editar e Excluir
 Carros e Marcas.
 
-Desenvolvido sem framework para praticar o uso dela
+Desenvolvido sem framework para praticar o desenvolvimento sem framework
 
